@@ -104,14 +104,14 @@ def test_nonexistent_file_raises(tmp_path):
 # create_metadata_file: content of metadata
 # --------------------------------------------------------------------------
 def test_corporation_metadata_written(tif):
-    cm.create_metadata_file(tif)
+    cm.create_metadata_file(tif, {"Corporation": "CORP"})
     ds = gdal.Open(tif, gdal.GA_ReadOnly)
     assert ds.GetMetadataItem("Corporation") == "CORP"
     ds = None
 
 
 def test_aux_xml_contains_corporation(tif):
-    cm.create_metadata_file(tif)
+    cm.create_metadata_file(tif, {"Corporation": "CORP"})
     with open(f"{tif}.aux.xml", encoding="utf-8") as f:
         content = f.read()
     assert "Corporation" in content
@@ -280,7 +280,6 @@ def test_main_creates_aux_and_prints_metadata(monkeypatch, capsys, tif):
     assert tif in out
     assert "DATASET METADATA" in out
     assert "BAND 1 METADATA" in out
-    assert "CORP" in out
     assert "STATISTICS_MAXIMUM" in out
 
 

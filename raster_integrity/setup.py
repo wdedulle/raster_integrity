@@ -5,9 +5,15 @@ import argparse, os, sys
 gdal.UseExceptions()
 
 
-def create_metadata_file(file_path):
+def create_metadata_file(file_path, metadata=None):
     if os.path.exists(f"{file_path}.aux.xml"):
         os.remove(f"{file_path}.aux.xml")
+    if metadata is not None:
+        for key, value in metadata.items():
+            if not isinstance(key, str) or not key.strip():
+                raise ValueError(f"Invalid metadata-key: {key!r}")
+            if value is None:
+                raise ValueError(f"Metadata-value for '{key}' is empty")
 
     gdalPamEnabled = gdal.GetConfigOption("GDAL_PAM_ENABLED")
     gdalGeorefSrcs = gdal.GetConfigOption("GDAL_GEOREF_SOURCES")
@@ -43,7 +49,9 @@ def create_metadata_file(file_path):
         gdal.OF_RASTER,
         open_options=["GEOREF_SOURCES=PAM"],  # PAM has priority
     )
-    ds2.SetMetadataItem("Corporation", "CORP")
+    if metadata:
+        for key, value in metadata.items():
+            ds2.SetMetadataItem(key, str(value))
     ds2.SetProjection(srs)
     ds2.SetGeoTransform(gt)
     if nodata is not None:
@@ -56,10 +64,26 @@ def create_metadata_file(file_path):
     gdal.SetConfigOption("GDAL_GEOREF_SOURCES", gdalGeorefSrcs)
 
 
+def parse_meta(item):
+    if "=" not in item:
+        raise argparse.ArgumentTypeError(f"Expected KEY=VALUE, given: {item}")
+    key, value = item.split("=", 1)
+    return key.strip(), value.strip()
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Evaluatie van integriteitscontrolemethoden voor bathymetrische data"
+        description="Enforce raster data to include metadata, ie: raster_integrity.setup -f raster.tif -m Corporation='CORP' Survey_Year=2025 Datum=LAT"
     )
+
+    parser.add_argument(
+        "--meta",
+        "-m",
+        action="append",
+        type=parse_meta,
+        help="Metadata as KEY=VALUE (repeatable ie: -m Corporation='CORP' Survey_Year=2025 Datum=LAT)",
+    )
+
     parser.add_argument(
         "--file", "-f", required=True, help="Raster file to create a metadatafile"
     )
@@ -69,8 +93,8 @@ def main():
     if not os.path.exists(args.file):
         print(f"ERROR: File not found: {args.file}")
         sys.exit(1)
-
-    create_metadata_file(args.file)
+    metadata = dict(args.meta) if args.meta else None
+    create_metadata_file(args.file, metadata)
 
     gdal.SetConfigOption("GDAL_PAM_ENABLED", "YES")
     ds = gdal.Open(args.file, gdal.GA_ReadOnly)

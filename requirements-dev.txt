@@ -21,7 +21,7 @@ nbconvert
 nbformat
 pre-commit
 pygments
-pymdown-extensions
+pymdown-extensions<12.2
 pytest
 pytest-runner
 sphinx

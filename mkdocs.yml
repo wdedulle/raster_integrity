@@ -82,5 +82,4 @@ nav:
     - Examples:
         - examples/intro.ipynb
     - API Reference:
-          - raster_integrity module: raster_integrity.md
-          - common module: common.md
+          - setup module: setup.md
