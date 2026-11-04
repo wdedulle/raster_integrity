@@ -11,7 +11,7 @@
 
 -   Free software: MIT License
 -   Documentation: <https://wdedulle.github.io/raster_integrity>
-    
+
 
 ## Features
 

@@ -1,13 +1,5 @@
 #!/usr/bin/env python
 
-"""
-Tests voor create_metadata_file() en main().
-
-Pas de import hieronder aan naar de echte modulenaam van je script,
-bv. `import raster_integrity as cm`.
-
-Vereisten: pytest, numpy, GDAL (osgeo).
-"""
 import hashlib
 import os
 import sys
@@ -28,7 +20,6 @@ EPSG = 31370  # Belgian Lambert 72
 # Helpers & fixtures
 # --------------------------------------------------------------------------
 def make_raster(path, data, nodata=None, gt=GT, epsg=EPSG):
-    """Maak een kleine GeoTIFF (Float32) aan en geef het pad terug als str."""
     rows, cols = data.shape
     ds = gdal.GetDriverByName("GTiff").Create(
         str(path), cols, rows, 1, gdal.GDT_Float32
@@ -47,7 +38,6 @@ def make_raster(path, data, nodata=None, gt=GT, epsg=EPSG):
 
 
 def normal_data():
-    """Realistische bathymetrie: waarden tussen -20 en 0 m."""
     rng = np.random.default_rng(42)
     return rng.uniform(-20, 0, size=(10, 10)).astype(np.float32)
 
@@ -59,14 +49,13 @@ def sha256(path):
 
 def read_nodata(path):
     ds = gdal.Open(path, gdal.GA_ReadOnly)
-    nd = ds.GetRasterBand(1).GetNoDataValue()
+    nodata = ds.GetRasterBand(1).GetNoDataValue()
     ds = None
-    return nd
+    return nodata
 
 
 @pytest.fixture(autouse=True)
 def restore_gdal_config():
-    """GDAL config options zijn globaal: bewaar en herstel ze per test."""
     keys = ("GDAL_PAM_ENABLED", "GDAL_GEOREF_SOURCES")
     saved = {k: gdal.GetConfigOption(k) for k in keys}
     yield
@@ -80,7 +69,7 @@ def tif(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# create_metadata_file: .aux.xml gedrag
+# create_metadata_file: .aux.xml behavior
 # --------------------------------------------------------------------------
 def test_creates_aux_xml(tif):
     assert not os.path.exists(f"{tif}.aux.xml")
@@ -112,12 +101,12 @@ def test_nonexistent_file_raises(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# create_metadata_file: inhoud van de metadata
+# create_metadata_file: content of metadata
 # --------------------------------------------------------------------------
 def test_corporation_metadata_written(tif):
     cm.create_metadata_file(tif)
     ds = gdal.Open(tif, gdal.GA_ReadOnly)
-    assert ds.GetMetadataItem("Corporation") == "Vlaamse Hydrografie"
+    assert ds.GetMetadataItem("Corporation") == "CORP"
     ds = None
 
 
@@ -126,7 +115,7 @@ def test_aux_xml_contains_corporation(tif):
     with open(f"{tif}.aux.xml", encoding="utf-8") as f:
         content = f.read()
     assert "Corporation" in content
-    assert "Vlaamse Hydrografie" in content
+    assert "CORP" in content
 
 
 def test_srs_and_geotransform_preserved(tif):
@@ -161,7 +150,7 @@ def test_statistics_written_to_pam(tif):
 
 
 # --------------------------------------------------------------------------
-# create_metadata_file: no-data detectie
+# create_metadata_file: no-data detection
 # --------------------------------------------------------------------------
 def test_no_nodata_set_for_normal_values(tif):
     cm.create_metadata_file(tif)
@@ -190,7 +179,7 @@ def test_large_max_detected_as_nodata(tmp_path):
 
 def test_very_small_min_detected_as_nodata(tmp_path):
     data = normal_data()
-    data[3, 3] = -3.4e38  # klassieke float32 nodata
+    data[3, 3] = -3.4e38
     path = make_raster(tmp_path / "small_min.tif", data)
 
     cm.create_metadata_file(path)
@@ -237,7 +226,7 @@ def test_values_within_thresholds_are_not_nodata(tmp_path, value):
 
 
 # --------------------------------------------------------------------------
-# create_metadata_file: GDAL config wordt hersteld
+# create_metadata_file: GDAL config will be restored
 # --------------------------------------------------------------------------
 def test_config_options_restored_when_previously_set(tif):
     gdal.SetConfigOption("GDAL_PAM_ENABLED", "NO")
@@ -291,7 +280,7 @@ def test_main_creates_aux_and_prints_metadata(monkeypatch, capsys, tif):
     assert tif in out
     assert "DATASET METADATA" in out
     assert "BAND 1 METADATA" in out
-    assert "Vlaamse Hydrografie" in out
+    assert "CORP" in out
     assert "STATISTICS_MAXIMUM" in out
 
 
