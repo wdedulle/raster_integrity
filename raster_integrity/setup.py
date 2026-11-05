@@ -111,3 +111,7 @@ def main():
     print(band_metadata)
     ds.FlushCache()
     ds = None
+
+
+if __name__ == "__main__":
+    main()

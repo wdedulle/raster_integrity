@@ -15,4 +15,5 @@
 
 ## Features
 
--   TODO
+-   Setting up metadata for raster files: it includes common and custom raster information.
+-
