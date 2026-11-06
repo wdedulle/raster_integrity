@@ -1,1 +1,5 @@
+bagit
+cryptography
 numpy
+pymerkle
+rfc3161_client

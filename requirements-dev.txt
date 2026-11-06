@@ -25,6 +25,7 @@ pymdown-extensions<12.2
 pytest
 pytest-runner
 sphinx
+tox
 twine
 watchdog
 wheel

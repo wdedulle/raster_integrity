@@ -73,7 +73,12 @@ def parse_meta(item):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Enforce raster data to include metadata, ie: raster_integrity.setup -f raster.tif -m Corporation='CORP' Survey_Year=2025 Datum=LAT"
+        description=(
+            "Enforce raster data to include metadata,"
+            "\n"
+            "ie: raster_integrity.setup -f raster.tif -m Corporation='CORP' Survey_Year=2025 Datum=LAT"
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
     )
 
     parser.add_argument(

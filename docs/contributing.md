@@ -87,6 +87,12 @@ Ready to contribute? Here's how to set up raster_integrity for local development
 
 6.  Commit your changes and push your branch to GitHub:
 
+    Automate code quality checks using pre-commit hooks to enforce best practices.
+    Test the hooks before commit by running:
+    ```shell
+    $ pre-commit run --all-files
+    ```
+
     ```shell
     $ git add .
     $ git commit -m "Your detailed description of your changes."
