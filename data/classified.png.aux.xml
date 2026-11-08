@@ -1,0 +1,16 @@
+<PAMDataset>
+  <GeoTransform>  0.0000000000000000e+00,  1.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  1.0000000000000000e+00</GeoTransform>
+  <Metadata>
+    <MDI key="used_for">classification for AI</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <ColorInterp>Red</ColorInterp>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">255</MDI>
+      <MDI key="STATISTICS_MEAN">139.44026680421</MDI>
+      <MDI key="STATISTICS_MINIMUM">0</MDI>
+      <MDI key="STATISTICS_STDDEV">94.651929749763</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
