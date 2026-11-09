@@ -68,55 +68,65 @@ class Timestamping:
 
         self._file = Path(kwargs["file"])
         if not self._file.is_file():
-            raise FileNotFoundError(f"Timestamping file not found: {self._file}")
+            raise FileNotFoundError(f"File not found for Timestamping: {self._file}")
 
     def label(self):
         return f"timestamping"
 
-    def house_holding(self, url="output.xyz"):
-        path = f"{url}.tsr"
-        if os.path.exists(path):
-            os.remove(path)
+    # def _house_holding(self, file=""):
+    #     path = f"{file}.tsr"
+    #     if os.path.exists(path):
+    #         os.remove(path)
 
-    def verify(self, url="output.xyz", integrity=""):
+    # def verify(self, url="output.xyz", integrity=""):
+    #     """
+    #     Clones this functionality
+    #     openssl ts -verify -in file.tsr -data file.txt -CAfile tsa_cert/cacert.pem
+    #     """
+    #     ca_path = "data/tsa_cert/cacert.pem"
+    #     self._ensure_file(ca_path)
+    #     data_path = self._file
+    #     try:
+    #         with open(url, "rb") as f:
+    #             tsr_bytes = f.read()
+
+    #         tsr_object = decode_timestamp_response(tsr_bytes)
+
+    #         with open(data_path, "rb") as f:
+    #             message_data = f.read()
+
+    #         with open(ca_path, "rb") as f:
+    #             ca_certs = x509.load_pem_x509_certificates(f.read())
+
+    #         builder = VerifierBuilder()
+    #         for cert in ca_certs:
+    #             builder.add_root_certificate(cert)
+
+    #         verifier = builder.build()
+
+    #         verifier.verify_message(tsr_object, message_data)
+
+    #         print(" Verification: OK")
+    #         return True
+
+    #     except VerificationError as ve:
+    #         print(f" Verification FAILED: Cryptografische fout of mismatch: {ve}")
+    #         return False
+    #     except Exception as e:
+    #         print(f" Fout bij het uitvoeren van de verificatie: {e}")
+    #         return False
+
+    def create_integrity(self, **kwargs):
         """
-        Clones this functionality
-        openssl ts -verify -in file.tsr -data file.txt -CAfile tsa_cert/cacert.pem
+        Parameters
+        ----------
+        tsr_name : str
+            Name given when timestamp is done and a timestamp is made
         """
-        ca_path = "data/tsa_cert/cacert.pem"
-        self._ensure_file(ca_path)
-        data_path = self._file
-        try:
-            with open(url, "rb") as f:
-                tsr_bytes = f.read()
+        if "tsr_name" not in kwargs:
+            raise TypeError("Missing required keyword argument: 'tsr_name'")
 
-            tsr_object = decode_timestamp_response(tsr_bytes)
-
-            with open(data_path, "rb") as f:
-                message_data = f.read()
-
-            with open(ca_path, "rb") as f:
-                ca_certs = x509.load_pem_x509_certificates(f.read())
-
-            builder = VerifierBuilder()
-            for cert in ca_certs:
-                builder.add_root_certificate(cert)
-
-            verifier = builder.build()
-
-            verifier.verify_message(tsr_object, message_data)
-
-            print(" Verification: OK")
-            return True
-
-        except VerificationError as ve:
-            print(f" Verification FAILED: Cryptografische fout of mismatch: {ve}")
-            return False
-        except Exception as e:
-            print(f" Fout bij het uitvoeren van de verificatie: {e}")
-            return False
-
-    def create_integrity(self, url="output.xyz"):
+        tsr_name = kwargs["tsr_name"]
         tsa_name = "freetsa"
         tsa_url = TSA_EINDPUNTEN.get(tsa_name)
 
@@ -125,7 +135,7 @@ class Timestamping:
 
         # Verzoek bouwen
         request = TimestampRequestBuilder().data(message).nonce().build()
-        with open(f"{url}.tsq", "wb") as f:
+        with open(f"{tsr_name}.tsq", "wb") as f:
             f.write(request.as_bytes())
         # print(request.nonce)
         # Sturen naar TSA
@@ -136,10 +146,10 @@ class Timestamping:
         )
         timestamp_response = decode_timestamp_response(response.content)
         tsr = timestamp_response.as_bytes()
-        with open(f"{url}.tsr", "wb") as f:
+        with open(f"{tsr_name}.tsr", "wb") as f:
             f.write(tsr)
 
-        return f"{url}.tsr"
+        return f"{tsr_name}.tsr"
 
     def _ensure_file(self, path, url=CACERT_URL):
         """Download `url` to `path` if the file does not exist yet."""

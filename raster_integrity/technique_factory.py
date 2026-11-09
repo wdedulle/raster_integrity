@@ -41,7 +41,7 @@ class TechniqueFactory:
                 f"Available codes:\n{self.help_text()}"
             )
 
-        return cls._mapping[hash_type](kwargs)
+        return self._mapping[hash_type](kwargs)
 
 
 class TechniqueFactory:

@@ -87,31 +87,20 @@ from pymerkle import SqliteTree, InmemoryTree
 import hashlib
 import sys
 import os
+from .technique import Technique
 
 gdal.UseExceptions()
 
 
-class MerkleTreeInmemoryHash:
-    def __init__(self, **kwargs):
-        """
-        Parameters
-        ----------
-        algorithm : str
-            kind of algorithm to used for creating hash key
-            standard: "sha256"
-        """
-        self._algorithm = "sha256"
-        if "algorithm" in kwargs:
-            self._algorithm = kwargs["algorithm"]
-
-    def _getDatasource(self, url):
-        ds = gdal.Open(url)
+class MerkleTreeInmemoryHash(Technique):
+    def _getDatasource(self, file):
+        ds = gdal.Open(file)
         if ds is None:
-            raise FileNotFoundError(f"GDAL cannot open file: {url}")
+            raise FileNotFoundError(f"GDAL cannot open file: {file}")
         return ds
 
-    def _getMerkleTree(self, url="output.xyz"):
-        self.house_holding(url)
+    def _getMerkleTree(self):
+        self._house_holding()
         return InmemoryTree(algorithm=self._algorithm)
 
     def _normalize_to_prec(self, value):
@@ -136,23 +125,31 @@ class MerkleTreeInmemoryHash:
     def label(self):
         return "merkle_tree_inmemory_hash"
 
-    def house_holding(self, url="output.xyz"):
-        db_path = f"{url}.db"
+    def _house_holding(self):
+        db_path = f"{self._file}.db"
         if os.path.exists(db_path):
             os.remove(db_path)
 
-    def verify(self, url="output.xyz", integrity=""):
-        return self.create_integrity(url) == integrity
+    def create_integrity(self, **kwargs):
+        """
+        Parameters
+        ----------
+        algorithm : str
+            kind of algorithm to used for creating hash key
+            standard: "sha256"
+        """
+        self._algorithm = "sha256"
+        if "algorithm" in kwargs:
+            self._algorithm = kwargs["algorithm"]
 
-    def create_integrity(self, url="output.xyz"):
-        ds = self._getDatasource(url)
+        ds = self._getDatasource(self._file)
         band = ds.GetRasterBand(1)
         nodata = band.GetNoDataValue()
 
         cols = ds.RasterXSize
         rows = ds.RasterYSize
 
-        tree = self._getMerkleTree(f"{url}")
+        tree = self._getMerkleTree()
 
         # ADDING metadata
         self._addMetadataToTree(ds.GetMetadata().items(), tree)
@@ -177,9 +174,9 @@ class MerkleTreeSqliteHash(MerkleTreeInmemoryHash):
     def label(self):
         return "merkle_tree_sqlite_hash"
 
-    def _getMerkleTree(self, url="output.xyz"):
-        self.house_holding(url)
-        return SqliteTree(f"{url}.db", algorithm=self._algorithm)
+    def _getMerkleTree(self):
+        self._house_holding()
+        return SqliteTree(f"{self._file}.db", algorithm=self._algorithm)
 
 
 class MerkleTreeInmemoryRobustHash(MerkleTreeInmemoryHash):
@@ -195,7 +192,23 @@ class MerkleTreeInmemoryRobustHash(MerkleTreeInmemoryHash):
               12.123     != 12.456
     """
 
-    def __init__(self, **kwargs):
+    def label(self):
+        return f"merkle_tree_robust_hash_p{self._precision}"
+
+    def _normalize_to_prec(self, value):
+        try:
+            return abs(round(float(value), self._precision))
+        except ValueError:
+            return value
+
+    def _robust_metadata(self, metadata):
+        if "STATISTICS_MEAN" in metadata and float(metadata["STATISTICS_MEAN"]) < 0:
+            new_min = metadata["STATISTICS_MAXIMUM"]
+            metadata["STATISTICS_MAXIMUM"] = metadata["STATISTICS_MINIMUM"]
+            metadata["STATISTICS_MINIMUM"] = new_min
+        return metadata
+
+    def create_integrity(self, **kwargs):
         """
         Parameters
         ----------
@@ -220,24 +233,7 @@ class MerkleTreeInmemoryRobustHash(MerkleTreeInmemoryHash):
         if "precision" in kwargs:
             self._precision = kwargs["precision"]
 
-    def label(self):
-        return f"merkle_tree_robust_hash_p{self._precision}"
-
-    def _normalize_to_prec(self, value):
-        try:
-            return abs(round(float(value), self._precision))
-        except ValueError:
-            return value
-
-    def _robust_metadata(self, metadata):
-        if "STATISTICS_MEAN" in metadata and float(metadata["STATISTICS_MEAN"]) < 0:
-            new_min = metadata["STATISTICS_MAXIMUM"]
-            metadata["STATISTICS_MAXIMUM"] = metadata["STATISTICS_MINIMUM"]
-            metadata["STATISTICS_MINIMUM"] = new_min
-        return metadata
-
-    def create_integrity(self, url="output.xyz"):
-        ds = self._getDatasource(url)
+        ds = self._getDatasource(self._file)
         band = ds.GetRasterBand(1)
         nodata = band.GetNoDataValue()
 

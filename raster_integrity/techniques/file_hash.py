@@ -43,12 +43,16 @@ Usage:
 import os
 import hashlib
 from osgeo import gdal
+from .technique import Technique
 
 gdal.UseExceptions()
 
 
-class FileHash:
-    def __init__(self, **kwargs):
+class FileHash(Technique):
+    def label(self):
+        return "file_hash"
+
+    def create_integrity(self, **kwargs):
         """
         Parameters
         ----------
@@ -61,20 +65,8 @@ class FileHash:
         else:
             self._algorithm = "sha256"
 
-    def label(self):
-        return "file_hash"
-
-    def verify(self, url="output.xyz", integrity=""):
-        return self.create_integrity(url) == integrity
-
-    def house_holding(self, url="output.xyz"):
-        path = f"{url}_hash"
-        if os.path.exists(path):
-            os.remove(path)
-
-    def create_integrity(self, url="output.xyz"):
         hasher = hashlib.new(self._algorithm)
-        with open(url, "rb") as f:
+        with open(self._file, "rb") as f:
             while chunk := f.read(65536):  # 64KB chunks
                 hasher.update(chunk)
         digest = hasher.hexdigest()

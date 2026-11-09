@@ -45,12 +45,30 @@ import bagit
 import os
 import shutil
 from osgeo import gdal
+from .technique import Technique
 
 gdal.UseExceptions()
 
 
-class BagItArchive:
-    def __init__(self, **kwargs):
+class BagItArchive(Technique):
+    def label(self):
+        return f"archive_bagit"
+
+    def _house_holding(self):
+        directory = self._get_directory(self._file)
+
+        if os.path.exists(directory):
+            shutil.rmtree(directory)
+        os.makedirs(directory)
+
+        filename = os.path.basename(self._file)
+        shutil.copy(self._file, os.path.join(directory, filename))
+
+        aux = f"{self._file}.aux.xml"
+        if os.path.exists(aux):
+            shutil.copy(aux, os.path.join(directory, f"{filename}.aux.xml"))
+
+    def create_integrity(self, **kwargs):
         """
         Parameters
         ----------
@@ -61,44 +79,21 @@ class BagItArchive:
             raise TypeError("Missing required keyword argument: 'root_hash'")
 
         self._root_hash = kwargs["root_hash"]
-
-    def label(self):
-        return f"bagit"
-
-    def verify(self, url="output.xyz", integrity=""):
-        bag = bagit.Bag(self._get_directory(url))
-        return bag.is_valid()
-
-    def _house_holding(self, url="output.xyz"):
-        directory = self._get_directory(url)
-
-        if os.path.exists(directory):
-            shutil.rmtree(directory)
-        os.makedirs(directory)
-
-        filename = os.path.basename(url)
-        shutil.copy(url, os.path.join(directory, filename))
-
-        aux = f"{url}.aux.xml"
-        if os.path.exists(aux):
-            shutil.copy(aux, os.path.join(directory, f"{filename}.aux.xml"))
-
-    def create_integrity(self, url="output.xyz"):
-        self._house_holding(url)
+        self._house_holding()
         bag = bagit.make_bag(
-            self._get_directory(url),
+            self._get_directory(self._file),
             {
                 "fingerprint": self._root_hash,
             },
         )
         return bag
 
-    def _get_directory(self, url):
-        root, _ = os.path.splitext(url)
+    def _get_directory(self, file):
+        root, _ = os.path.splitext(file)
         return f"{root}_bagit"
 
-    def _create_directory(self, url):
-        dir = self._get_directory(url)
+    def _create_directory(self, file):
+        dir = self._get_directory(file)
         if not os.path.exists(dir):
             os.mkdir(dir)
         return dir

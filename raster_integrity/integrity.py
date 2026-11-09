@@ -34,11 +34,11 @@ def main():
         parser.error(f"File not found: {args.input}")
 
     try:
-        method = TechniqueFactory.create(args.technique, **dict(args.arg or []))
+        method = TechniqueFactory.create(args.technique, file=args.input)
     except (ValueError, TypeError) as e:
         parser.error(str(e))
 
-    print(method.create_integrity(args.input))
+    print(method.create_integrity(**dict(args.arg or [])))
 
 
 if __name__ == "__main__":

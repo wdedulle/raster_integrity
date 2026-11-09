@@ -33,11 +33,11 @@ python .\raster_integrity\integrity.py -i .\data\classified.jpg -t ba -a root_ha
 ```
 -   Seal the tagmanifest with timestamping
 ```shell
-python .\raster_integrity\integrity.py -i .\data\classified.jpg -t ts -a file=.\data\classified_bagit\tagmanifest-sha256.txt
-.\data\classified.jpg.tsr
+python .\raster_integrity\integrity.py -i .\data\classified_bagit\tagmanifest-sha256.txt -t ts -a tsr_name=.\data\tagmanifest_cassified_jpg
+.\data\tagmanifest_cassified_jpg.tsr
 ```
 
--   Verification
+-   Verification - To Be
 ```shell
 python .\raster_integrity\verify.py -a file=.\data\classified_bagit\tagmanifest-sha256.txt -t ts -s .\data\classified.jpg.tsr
 python .\raster_integrity\verify.py -a root_hash=8eb3bdddc021b045622f9811ff925d132ad6274f0bba6546dcbf6014dac19bdf -t me -s .\data\classified.jpg
