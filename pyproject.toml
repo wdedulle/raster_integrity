@@ -1,5 +1,5 @@
 [project]
-name = "raster_integrity"
+name = "raster-integrity"
 version = "0.0.2"
 dynamic = [
     "dependencies",
@@ -8,7 +8,7 @@ description = "Technical methods for checking the integrity of raster data"
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = [
-    "raster_integrity",
+    "raster-integrity",
 ]
 license = {text = "MIT License"}
 authors = [
