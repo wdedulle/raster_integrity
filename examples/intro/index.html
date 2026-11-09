@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -910,64 +910,48 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span>
 
-<span class="n">gdal</span><span class="o">.</span><span class="n">Translate</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.png"</span><span class="p">,</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.jpg"</span><span class="p">,</span>
-    <span class="nb">format</span><span class="o">=</span><span class="s2">"PNG"</span><span class="p">,</span>
-    <span class="n">bandList</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="n">gdal</span><span class="o">.</span><span class="n">Translate</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.tif"</span><span class="p">,</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.jpg"</span><span class="p">,</span>
-    <span class="nb">format</span><span class="o">=</span><span class="s2">"GTiff"</span><span class="p">,</span>
-    <span class="n">bandList</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="n">gdal</span><span class="o">.</span><span class="n">Translate</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.asc"</span><span class="p">,</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.jpg"</span><span class="p">,</span>
-    <span class="nb">format</span><span class="o">=</span><span class="s2">"AAIGrid"</span><span class="p">,</span>
-    <span class="n">bandList</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="n">gdal</span><span class="o">.</span><span class="n">Translate</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.xyz"</span><span class="p">,</span>
-    <span class="sa">r</span><span class="s2">"..\..\data\classified.jpg"</span><span class="p">,</span>
-    <span class="nb">format</span><span class="o">=</span><span class="s2">"XYZ"</span><span class="p">,</span>
-    <span class="n">bandList</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="c1"># gdal.Translate(r"..\..\data\classified.cad", r"..\..\data\classified.jpg", format="CAD", bandList=[1] )</span>
-<span class="c1"># gdal.Translate(r"..\..\data\classified.bag", r"..\..\data\classified.jpg", format="BAG", bandList=[1] )</span>
+<span class="c1"># gdal.Translate(</span>
+<span class="c1">#     r"..\..\data\classified.png",</span>
+<span class="c1">#     r"..\..\data\classified.jpg",</span>
+<span class="c1">#     format="PNG",</span>
+<span class="c1">#     bandList=[1],</span>
+<span class="c1"># )</span>
+<span class="c1"># gdal.Translate(</span>
+<span class="c1">#     r"..\..\data\classified.tif",</span>
+<span class="c1">#     r"..\..\data\classified.jpg",</span>
+<span class="c1">#     format="GTiff",</span>
+<span class="c1">#     bandList=[1],</span>
+<span class="c1"># )</span>
+<span class="c1"># gdal.Translate(</span>
+<span class="c1">#     r"..\..\data\classified.asc",</span>
+<span class="c1">#     r"..\..\data\classified.jpg",</span>
+<span class="c1">#     format="AAIGrid",</span>
+<span class="c1">#     bandList=[1],</span>
+<span class="c1"># )</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">print("Hello World!")
 from osgeo import gdal
 
 gdal.UseExceptions()
 
-gdal.Translate(
-    r"..\..\data\classified.png",
-    r"..\..\data\classified.jpg",
-    format="PNG",
-    bandList=[1],
-)
-gdal.Translate(
-    r"..\..\data\classified.tif",
-    r"..\..\data\classified.jpg",
-    format="GTiff",
-    bandList=[1],
-)
-gdal.Translate(
-    r"..\..\data\classified.asc",
-    r"..\..\data\classified.jpg",
-    format="AAIGrid",
-    bandList=[1],
-)
-gdal.Translate(
-    r"..\..\data\classified.xyz",
-    r"..\..\data\classified.jpg",
-    format="XYZ",
-    bandList=[1],
-)
-# gdal.Translate(r"..\..\data\classified.cad", r"..\..\data\classified.jpg", format="CAD", bandList=[1] )
-# gdal.Translate(r"..\..\data\classified.bag", r"..\..\data\classified.jpg", format="BAG", bandList=[1] )</div>
+# gdal.Translate(
+#     r"..\..\data\classified.png",
+#     r"..\..\data\classified.jpg",
+#     format="PNG",
+#     bandList=[1],
+# )
+# gdal.Translate(
+#     r"..\..\data\classified.tif",
+#     r"..\..\data\classified.jpg",
+#     format="GTiff",
+#     bandList=[1],
+# )
+# gdal.Translate(
+#     r"..\..\data\classified.asc",
+#     r"..\..\data\classified.jpg",
+#     format="AAIGrid",
+#     bandList=[1],
+# )</div>
 </div>
 </div>
 </div>
@@ -981,12 +965,6 @@ gdal.Translate(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Hello World!
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[1]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>&lt;osgeo.gdal.Dataset; proxy of &lt;Swig Object of type 'GDALDatasetShadow *' at 0x000001D76E0D3B10&gt; &gt;</pre>
 </div>
 </div>
 </div>
@@ -1022,7 +1000,7 @@ gdal.Translate(
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 6, 2026 20:26:00 UTC"><span class="timeago" datetime="2026-11-06T20:26:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 6, 2026 20:26:00 UTC">2026-11-06</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 8, 2026 21:23:19 UTC"><span class="timeago" datetime="2026-11-08T21:23:19+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 8, 2026 21:23:19 UTC">2026-11-08</span>
   </span>
 
     
@@ -1068,7 +1046,7 @@ gdal.Translate(
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2024 - 2024 Dedulle Wim
+      Copyright &copy; 2026 - 2026 Dedulle Wim
     </div>
   
   
@@ -1095,7 +1073,7 @@ gdal.Translate(
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.top", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       
